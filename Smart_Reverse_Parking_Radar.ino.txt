@@ -1,0 +1,55 @@
+// Smart Reverse Parking Radar
+// Components: Arduino UNO, HC-SR04 Ultrasonic Sensor, Buzzer
+
+#define TRIG 9
+#define ECHO 10
+#define BUZZER 8
+
+long duration;
+int distance;
+
+void setup() {
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+  pinMode(BUZZER, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Send ultrasonic pulse
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+
+  // Measure echo time
+  duration = pulseIn(ECHO, HIGH);
+
+  // Convert to distance in cm
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Buzzer alerts depending on distance
+  if (distance < 15) {
+    tone(BUZZER, 1000); // Continuous beep (very close)
+  } 
+  else if (distance < 30) {
+    tone(BUZZER, 800);
+    delay(200);
+    noTone(BUZZER);
+    delay(200);
+  } 
+  else if (distance < 50) {
+    tone(BUZZER, 600);
+    delay(400);
+    noTone(BUZZER);
+    delay(400);
+  } 
+  else {
+    noTone(BUZZER); // Safe distance
+  }
+}
